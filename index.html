@@ -5,10 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GPU Resource Calculator</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- LaTeX font and rendering libraries -->
+    <link href="https://fonts.googleapis.com/css2?family=STIX+Two+Text:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" xintegrity="sha384-n8MVd4RsNIU0KOVEMVIUpQMatIqbJQPkCoXYpoCWORWaYdDNica/5GkJnzNlZaJe" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" xintegrity="sha384-XjKyOOlVwcpaN8vrwrpdZDNfeNGNUIBCM6BCJySah5Rx7AFiWlB41xKStKAxdCVcc" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" xintegrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"></script>
+
     <style>
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'STIX Two Text', serif;
             background-color: #f8fafc;
         }
         .card {
@@ -25,10 +30,14 @@
             background-color: #f9fafb;
             border: 1px solid #e5e7eb;
         }
-        label {
+        label, h3 {
+            font-family: 'Inter', sans-serif; /* Use sans-serif for UI elements for clarity */
             font-size: 0.875rem;
             font-weight: 500;
             color: #374151;
+        }
+        h1, h2 {
+             font-family: 'STIX Two Text', serif;
         }
     </style>
 </head>
@@ -37,8 +46,8 @@
     <div class="max-w-4xl w-full mx-auto">
         <div class="card">
             <div class="text-center mb-8">
-                <h1 class="text-3xl font-bold text-gray-900">GPU Resource Calculator</h1>
-                <p class="text-gray-600 mt-2">Estimate VRAM and training time based on model, data, and hardware specs.</p>
+                <h1 class="text-4xl font-bold text-gray-900">GPU Resource Calculator</h1>
+                <p class="text-gray-600 mt-2 font-sans">Estimate VRAM and training time based on model, data, and hardware specs.</p>
             </div>
 
             <!-- Inputs Section -->
@@ -48,11 +57,11 @@
                     <h3 class="font-semibold text-lg text-gray-800 border-b pb-2">Model Configuration</h3>
                     <div>
                         <label for="model-params" class="block mb-2">Model Parameters (Millions)</label>
-                        <input type="number" id="model-params" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500" placeholder="e.g., 7000">
+                        <input type="number" id="model-params" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 font-sans" placeholder="e.g., 7000">
                     </div>
                     <div>
                         <label for="seq-len" class="block mb-2">Sequence Length</label>
-                        <input type="number" id="seq-len" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500" placeholder="e.g., 2048">
+                        <input type="number" id="seq-len" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 font-sans" placeholder="e.g., 2048">
                     </div>
                 </div>
 
@@ -61,15 +70,15 @@
                     <h3 class="font-semibold text-lg text-gray-800 border-b pb-2">Training Configuration</h3>
                     <div>
                         <label for="dataset-samples" class="block mb-2">Dataset Size (Total Samples)</label>
-                        <input type="number" id="dataset-samples" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500" placeholder="e.g., 1000000">
+                        <input type="number" id="dataset-samples" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 font-sans" placeholder="e.g., 1000000">
                     </div>
                     <div>
                         <label for="batch-size" class="block mb-2">Batch Size (per GPU)</label>
-                        <input type="number" id="batch-size" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500" placeholder="e.g., 8">
+                        <input type="number" id="batch-size" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 font-sans" placeholder="e.g., 8">
                     </div>
                     <div>
                         <label for="epochs" class="block mb-2">Number of Epochs</label>
-                        <input type="number" id="epochs" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500" placeholder="e.g., 3">
+                        <input type="number" id="epochs" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 font-sans" placeholder="e.g., 3">
                     </div>
                 </div>
 
@@ -78,7 +87,7 @@
                      <h3 class="font-semibold text-lg text-gray-800 border-b pb-2">Hardware & Precision</h3>
                     <div>
                         <label for="gpu-type" class="block mb-2">GPU Type</label>
-                        <select id="gpu-type" class="w-full px-4 py-2 border border-gray-300 rounded-md bg-white focus:ring-indigo-500 focus:border-indigo-500">
+                        <select id="gpu-type" class="w-full px-4 py-2 border border-gray-300 rounded-md bg-white focus:ring-indigo-500 focus:border-indigo-500 font-sans">
                             <option value="a100_80">NVIDIA A100 (80 GB)</option>
                             <option value="rtx4090">NVIDIA RTX 4090 (24 GB)</option>
                             <option value="rtx3090">NVIDIA RTX 3090 (24 GB)</option>
@@ -90,11 +99,11 @@
                     </div>
                     <div>
                         <label for="num-gpus" class="block mb-2">Number of GPUs</label>
-                        <input type="number" id="num-gpus" value="1" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500" placeholder="e.g., 8">
+                        <input type="number" id="num-gpus" value="1" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 font-sans" placeholder="e.g., 8">
                     </div>
                     <div>
                         <label for="precision" class="block mb-2">Training Precision</label>
-                        <select id="precision" class="w-full px-4 py-2 border border-gray-300 rounded-md bg-white focus:ring-indigo-500 focus:border-indigo-500">
+                        <select id="precision" class="w-full px-4 py-2 border border-gray-300 rounded-md bg-white focus:ring-indigo-500 focus:border-indigo-500 font-sans">
                             <option value="fp16">FP16/BF16 (Mixed Precision)</option>
                             <option value="fp32">FP32 (Full Precision)</option>
                         </select>
@@ -103,33 +112,76 @@
             </div>
 
             <!-- Calculate Button -->
-            <button id="calculate-btn" class="mt-8 w-full bg-indigo-600 text-white font-bold py-3 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 btn">
+            <button id="calculate-btn" class="mt-8 w-full bg-indigo-600 text-white font-bold py-3 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 btn font-sans">
                 Calculate
             </button>
 
             <!-- Results Section -->
             <div id="results" class="mt-8 hidden">
                 <div class="result-card p-6 rounded-lg">
-                    <h2 class="text-2xl font-semibold text-gray-800 text-center mb-4">Estimated Requirements</h2>
+                    <h2 class="text-3xl font-semibold text-gray-800 text-center mb-4">Estimated Requirements</h2>
                     <div id="result-text" class="text-lg text-center grid grid-cols-1 md:grid-cols-2 gap-6"></div>
-                    <p class="text-xs text-gray-500 mt-6 text-center"><strong>Disclaimer:</strong> These are theoretical estimates. Actual VRAM usage is higher due to activations and fragmentation. Training time depends on software, interconnect, and I/O speed.</p>
+                    <p class="text-xs text-gray-500 mt-6 text-center font-sans"><strong>Disclaimer:</strong> These are theoretical estimates. Actual VRAM usage is higher due to activations and fragmentation. Training time depends on software, interconnect, and I/O speed.</p>
                 </div>
             </div>
-             <div id="error-message" class="hidden mt-4 bg-red-100 border-l-4 border-red-500 text-red-700 p-4" role="alert"></div>
+             <div id="error-message" class="hidden mt-4 bg-red-100 border-l-4 border-red-500 text-red-700 p-4 font-sans" role="alert"></div>
+            
+            <!-- Formulas Section -->
+            <div id="formulas" class="mt-8 hidden">
+                <div class="result-card p-6 rounded-lg">
+                    <h2 class="text-3xl font-semibold text-gray-800 text-center mb-6">Calculation Formulas</h2>
+                    <div class="space-y-6 text-left">
+                        <div>
+                            <h3 class="font-semibold text-xl mb-2 text-gray-700">VRAM Requirement (per GPU)</h3>
+                            <div class="text-center text-lg p-2 bg-gray-50 rounded">$$ VRAM_{GB} = \frac{P \times 10^6 \times M_{vram}}{10^9} $$</div>
+                            <ul class="list-disc list-inside text-base text-gray-700 mt-3 pl-4 font-sans space-y-1">
+                                <li>$ P $: Model Parameters in Millions</li>
+                                <li>$ M_{vram} $: VRAM Multiplier (~8 for FP16, ~20 for FP32)</li>
+                            </ul>
+                        </div>
+                        <hr>
+                        <div>
+                            <h3 class="font-semibold text-xl mb-2 text-gray-700">Estimated Training Time</h3>
+                            <div class="text-center text-lg p-2 bg-gray-50 rounded">$$ Time_{hours} = \frac{FLOPS_{total}}{TFLOPS_{system} \times 10^{12} \times 3600} $$</div>
+                            <p class="mt-4 text-center font-sans">Where $ FLOPS_{total} $ is:</p>
+                            <div class="text-center text-lg p-2 bg-gray-50 rounded mt-2">$$ FLOPS_{total} = Steps \times (6 \times P \times 10^6 \times L \times B \times N) $$</div>
+                             <p class="mt-4 text-center font-sans">And $ Steps $ are:</p>
+                            <div class="text-center text-lg p-2 bg-gray-50 rounded mt-2">$$ Steps = \frac{S}{B \times N} \times E $$</div>
+                            <ul class="list-disc list-inside text-base text-gray-700 mt-3 pl-4 font-sans space-y-1">
+                                <li>$ S $: Total Dataset Samples</li>
+                                <li>$ B $: Batch Size per GPU</li>
+                                <li>$ N $: Number of GPUs</li>
+                                <li>$ E $: Number of Epochs</li>
+                                <li>$ L $: Sequence Length</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
+        // --- Auto-render LaTeX ---
+        document.addEventListener("DOMContentLoaded", function() {
+            renderMathInElement(document.body, {
+              delimiters: [
+                  {left: '$$', right: '$$', display: true},
+                  {left: '$', right: '$', display: false}
+              ]
+            });
+        });
+
         // --- GPU Data ---
         // TFLOPS data for FP32 and FP16/BF16 (Tensor Float)
         const gpus = {
             "a100_80": { name: "NVIDIA A100 (80 GB)", vram: 80, tflops: { fp32: 19.5, fp16: 312 } },
-            "rtx4090": { name: "NVIDIA RTX 4090 (24 GB)", vram: 24, tflops: { fp32: 82.6, fp16: 330 } }, // FP16 with sparsity can be higher
+            "rtx4090": { name: "NVIDIA RTX 4090 (24 GB)", vram: 24, tflops: { fp32: 82.6, fp16: 330 } },
             "rtx3090": { name: "NVIDIA RTX 3090 (24 GB)", vram: 24, tflops: { fp32: 35.6, fp16: 142 } },
             "a100_40": { name: "NVIDIA A100 (40 GB)", vram: 40, tflops: { fp32: 19.5, fp16: 312 } },
             "v100_32": { name: "NVIDIA V100 (32 GB)", vram: 32, tflops: { fp32: 15.7, fp16: 125 } },
             "v100_16": { name: "NVIDIA V100 (16 GB)", vram: 16, tflops: { fp32: 15.7, fp16: 125 } },
-            "gtx1080ti": { name: "NVIDIA GTX 1080 Ti (11 GB)", vram: 11, tflops: { fp32: 11.3, fp16: 11.3 } } // No tensor cores
+            "gtx1080ti": { name: "NVIDIA GTX 1080 Ti (11 GB)", vram: 11, tflops: { fp32: 11.3, fp16: 11.3 } }
         };
 
         // --- DOM Elements ---
@@ -137,6 +189,7 @@
         const resultsDiv = document.getElementById('results');
         const resultText = document.getElementById('result-text');
         const errorDiv = document.getElementById('error-message');
+        const formulasDiv = document.getElementById('formulas');
 
         // --- Event Listener ---
         calculateBtn.addEventListener('click', () => {
@@ -157,60 +210,53 @@
                 errorDiv.textContent = "Please enter valid positive numbers for all fields.";
                 errorDiv.classList.remove('hidden');
                 resultsDiv.classList.add('hidden');
+                formulasDiv.classList.add('hidden');
                 return;
             }
             errorDiv.classList.add('hidden');
 
             // --- VRAM Calculation ---
-            // Multiplier for model params, gradients, and optimizer states.
-            // FP32: 4 bytes for params, 4 for gradients, 8 for Adam optimizer states = ~16-20 bytes/param
-            // FP16: 2 bytes for params, 2 for gradients, 4 for Adam optimizer states = ~6-8 bytes/param
             const vramMultiplier = precision === 'fp32' ? 20 : 8;
             const estimatedVramPerGpu = (modelParams * 1e6 * vramMultiplier) / 1e9; // in GB
 
             let vramResultHTML = '';
             if (estimatedVramPerGpu > selectedGpu.vram) {
                 vramResultHTML = `
-                    <p class="text-red-600 font-bold">VRAM Insufficient</p>
-                    <p class="text-sm text-gray-600">The model requires ~${estimatedVramPerGpu.toFixed(2)} GB per GPU, but the selected GPU only has ${selectedGpu.vram} GB.</p>
+                    <p class="text-red-600 font-bold font-sans">VRAM Insufficient</p>
+                    <p class="text-sm text-gray-600 font-sans">The model requires ~${estimatedVramPerGpu.toFixed(2)} GB per GPU, but the selected GPU only has ${selectedGpu.vram} GB.</p>
                 `;
             } else {
-                 vramResultHTML = `<p class="text-green-600 font-bold">VRAM Appears Sufficient</p>
-                 <p class="text-sm text-gray-600">The model requires ~${estimatedVramPerGpu.toFixed(2)} GB per GPU.</p>`;
+                 vramResultHTML = `<p class="text-green-600 font-bold font-sans">VRAM Appears Sufficient</p>
+                 <p class="text-sm text-gray-600 font-sans">The model requires ~${estimatedVramPerGpu.toFixed(2)} GB per GPU.</p>`;
             }
 
             // --- Time Calculation ---
-            // Total training steps
             const totalTrainingSteps = (datasetSamples / (batchSize * numGpus)) * epochs;
-
-            // FLOPS per forward/backward pass: ~6 * params * seq_len * batch_size
             const flopsPerStep = 6 * (modelParams * 1e6) * seqLen * batchSize * numGpus;
-
-            // Total FLOPS
             const totalFlops = flopsPerStep * totalTrainingSteps;
-
-            // TFLOPS for the selected precision
             const gpuTflops = selectedGpu.tflops[precision];
             const totalSystemTflops = gpuTflops * numGpus;
-
-            // Estimated time
-            const estimatedSeconds = totalFlops / (totalSystemTflops * 1e12);
+            const estimatedSeconds = totalSystemTflops > 0 ? totalFlops / (totalSystemTflops * 1e12) : 0;
             const estimatedHours = estimatedSeconds / 3600;
 
             // --- Display Results ---
             resultText.innerHTML = `
-                <div class="border-r pr-6">
-                    <p class="font-semibold text-gray-700">VRAM Requirement (per GPU)</p>
-                    <p class="text-3xl font-bold text-indigo-600">${estimatedVramPerGpu.toFixed(2)} GB</p>
+                <div class="md:border-r md:pr-6">
+                    <p class="font-semibold text-gray-700 font-sans text-xl">VRAM Requirement (per GPU)</p>
+                    <p class="text-4xl font-bold text-indigo-600 my-2">${estimatedVramPerGpu.toFixed(2)} GB</p>
                     <div class="mt-2">${vramResultHTML}</div>
                 </div>
                 <div>
-                    <p class="font-semibold text-gray-700">Estimated Training Time</p>
-                    <p class="text-3xl font-bold text-indigo-600">${estimatedHours.toFixed(2)} hours</p>
-                    <p class="text-sm text-gray-600 mt-2">Across ${numGpus} GPU(s) for ${epochs} epoch(s).</p>
+                    <p class="font-semibold text-gray-700 font-sans text-xl">Estimated Training Time</p>
+                    <p class="text-4xl font-bold text-indigo-600 my-2">${estimatedHours.toFixed(2)} hours</p>
+                    <p class="text-sm text-gray-600 mt-2 font-sans">Across ${numGpus} GPU(s) for ${epochs} epoch(s).</p>
                 </div>
             `;
             resultsDiv.classList.remove('hidden');
+            formulasDiv.classList.remove('hidden');
+
+            // Re-render math in the newly visible elements
+            renderMathInElement(formulasDiv);
         });
     </script>
 </body>
