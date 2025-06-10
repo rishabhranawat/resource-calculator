@@ -69,8 +69,8 @@
                 <div class="space-y-6 p-4 border rounded-lg">
                     <h3 class="font-semibold text-lg text-gray-800 border-b pb-2">Training Configuration</h3>
                     <div>
-                        <label for="dataset-samples" class="block mb-2">Dataset Size (Total Samples)</label>
-                        <input type="number" id="dataset-samples" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 font-sans" placeholder="e.g., 1000000">
+                        <label for="dataset-samples" class="block mb-2">Dataset Size (Millions of Samples)</label>
+                        <input type="number" id="dataset-samples" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 font-sans" placeholder="e.g., 1">
                     </div>
                     <div>
                         <label for="batch-size" class="block mb-2">Batch Size (per GPU)</label>
@@ -146,9 +146,9 @@
                             <p class="mt-4 text-center font-sans">Where $ FLOPS_{total} $ is:</p>
                             <div class="text-center text-lg p-2 bg-gray-50 rounded mt-2">$$ FLOPS_{total} = Steps \times (6 \times P \times 10^6 \times L \times B \times N) $$</div>
                              <p class="mt-4 text-center font-sans">And $ Steps $ are:</p>
-                            <div class="text-center text-lg p-2 bg-gray-50 rounded mt-2">$$ Steps = \frac{S}{B \times N} \times E $$</div>
+                            <div class="text-center text-lg p-2 bg-gray-50 rounded mt-2">$$ Steps = \frac{S_M \times 10^6}{B \times N} \times E $$</div>
                             <ul class="list-disc list-inside text-base text-gray-700 mt-3 pl-4 font-sans space-y-1">
-                                <li>$ S $: Total Dataset Samples</li>
+                                <li>$ S_M $: Dataset Size in Millions of Samples</li>
                                 <li>$ B $: Batch Size per GPU</li>
                                 <li>$ N $: Number of GPUs</li>
                                 <li>$ E $: Number of Epochs</li>
@@ -196,7 +196,7 @@
             // --- Get All Inputs ---
             const modelParams = parseFloat(document.getElementById('model-params').value);
             const seqLen = parseInt(document.getElementById('seq-len').value, 10);
-            const datasetSamples = parseFloat(document.getElementById('dataset-samples').value);
+            const datasetSamplesInMillions = parseFloat(document.getElementById('dataset-samples').value);
             const batchSize = parseInt(document.getElementById('batch-size').value, 10);
             const epochs = parseInt(document.getElementById('epochs').value, 10);
             const numGpus = parseInt(document.getElementById('num-gpus').value, 10);
@@ -205,7 +205,7 @@
             const selectedGpu = gpus[selectedGpuKey];
 
             // --- Input Validation ---
-            const inputs = { modelParams, seqLen, datasetSamples, batchSize, epochs, numGpus };
+            const inputs = { modelParams, seqLen, datasetSamplesInMillions, batchSize, epochs, numGpus };
             if (Object.values(inputs).some(isNaN) || Object.values(inputs).some(v => v <= 0)) {
                 errorDiv.textContent = "Please enter valid positive numbers for all fields.";
                 errorDiv.classList.remove('hidden');
@@ -231,6 +231,7 @@
             }
 
             // --- Time Calculation ---
+            const datasetSamples = datasetSamplesInMillions * 1e6; // Convert millions to total
             const totalTrainingSteps = (datasetSamples / (batchSize * numGpus)) * epochs;
             const flopsPerStep = 6 * (modelParams * 1e6) * seqLen * batchSize * numGpus;
             const totalFlops = flopsPerStep * totalTrainingSteps;
